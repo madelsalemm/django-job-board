@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from multiprocessing import context
+from django.shortcuts import redirect, render
+from django.urls import is_valid_path
+#from .models import job , Apply
+#from .form import ApplyForm , JobForm
 
-# Create your views here.
+def send_message(request):
+    pass

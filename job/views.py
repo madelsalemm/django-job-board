@@ -4,14 +4,25 @@ from django.urls import is_valid_path
 from .models import job , Apply
 from django.core.paginator import Paginator
 from .form import ApplyForm , JobForm
+from django.contrib.auth.decorators import login_required
+from .filters import JobFilter
 # Create your views here.
 
 def job_list(request):
     job_list = job.objects.all()
+    
+    #Filter
+    filter = JobFilter(request.GET, queryset=job_list)
+    job_list = filter.qs
+    #Filter
+    
     paginator = Paginator(job_list, 4) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context = {'all_jobs' : page_obj}   #{'name in html' : name of all data above}
+    
+
+    
+    context = {'all_jobs' : page_obj , 'filter' : filter}   #{'name in html' : name of all data above}
     return render (request , 'job/job_list.html' ,context)
 
 def job_details(request , slug):
@@ -28,6 +39,7 @@ def job_details(request , slug):
     context = {'job_det' : job_details , 'form' : form}
     return render (request , 'job/job_detail.html' , context)
 
+@login_required
 def add_job (request):
     if request.method == 'POST':
         form = JobForm(request.POST , request.FILES)
